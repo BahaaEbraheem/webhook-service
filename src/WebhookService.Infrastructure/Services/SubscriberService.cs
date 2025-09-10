@@ -165,6 +165,7 @@ public class SubscriberService : ISubscriberService
     public async Task<List<Subscriber>> GetSubscribersByTenantAndEventTypeAsync(string tenantId, string eventType)
     {
         // محاولة الحصول من الكاش أولاً - Try to get from cache first
+        //•	Redis caching for subscriber configs (subs:{tenantId}) with TTL 60s.
         var cacheKey = $"subs:{tenantId}";
         var cachedSubscribers = await _cacheService.GetAsync<List<Subscriber>>(cacheKey);
         

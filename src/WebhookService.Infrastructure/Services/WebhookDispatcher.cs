@@ -30,8 +30,9 @@ public class WebhookDispatcher : IWebhookDispatcher
         _context = context;
         _signatureService = signatureService;
         _logger = logger;
-        
+
         // إعداد HttpClient - Configure HttpClient
+        //•	Timeout per delivery: 5s.
         _httpClient.Timeout = TimeSpan.FromSeconds(5); // مهلة زمنية 5 ثوان
     }
 
@@ -247,7 +248,7 @@ public class WebhookDispatcher : IWebhookDispatcher
             await UpdateDeliveryStatusAsync(delivery.Id, DeliveryStatus.DLQ, null, "Max attempts reached", 0);
             return;
         }
-
+        //•	Retry policy: exponential backoff + jitter (~2s, ~10s, ~30s, ~2m, ~10m).
         // حساب وقت إعادة المحاولة التالية - Calculate next retry time
         var retryDelays = new[] { 2, 10, 30, 120, 600 }; // seconds: ~2s, ~10s, ~30s, ~2m, ~10m
         var delaySeconds = retryDelays[Math.Min(delivery.AttemptNumber - 1, retryDelays.Length - 1)];

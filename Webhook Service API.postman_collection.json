@@ -1,0 +1,843 @@
+{
+	"info": {
+		"_postman_id": "c7ad308d-7a57-4a9c-a021-041abb793bf0",
+		"name": "Webhook Service API",
+		"description": "خدمة الويب هوك - مجموعة شاملة لاختبار جميع نقاط النهاية\nWebhook Service - Comprehensive collection for testing all endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16308516"
+	},
+	"item": [
+		{
+			"name": "Health & Monitoring",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Health Check",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/health",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 10:24:14 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"Healthy\",\n    \"timestamp\": \"2025-09-10T10:24:15.1649809Z\",\n    \"checks\": {\n        \"database\": {\n            \"status\": \"Healthy\",\n            \"duration\": \"00:00:00.0582102\",\n            \"description\": \"قاعدة البيانات تعمل بشكل طبيعي - Database is working normally\"\n        },\n        \"redis\": {\n            \"status\": \"Healthy\",\n            \"duration\": \"00:00:00.0016486\",\n            \"description\": \"Redis يعمل بشكل طبيعي - Redis is working normally\"\n        },\n        \"system\": {\n            \"status\": \"Healthy\",\n            \"duration\": \"00:00:00\",\n            \"description\": \"الذاكرة المستخدمة: 6 MB - Memory usage: 6 MB\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Prometheus Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/metrics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"metrics"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscribers",
+			"item": [
+				{
+					"name": "Create Subscriber",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n     \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n  \"eventTypes\": [\"user.created\", \"order.completed\"],\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Subscriber",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n     \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n  \"eventTypes\": [\"user.created\", \"order.completed\"],\n  \"isActive\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/subscribers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"subscribers"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 13:37:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "/api/subscribers/cb77b65c-bc08-4e77-b460-0c8ea88b8ebe/status"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"cb77b65c-bc08-4e77-b460-0c8ea88b8ebe\",\n    \"tenantId\": \"tenant-123\",\n    \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n    \"eventTypes\": [\n        \"user.created\",\n        \"order.completed\"\n    ],\n    \"keyId\": \"0e07235fd7f64a08\",\n    \"secret\": \"8eITYHVVZWJKiJ+JTp7G+jmrztD+QC+oAmV5JewU9O4=\",\n    \"createdAt\": \"2025-09-10T13:37:55.1158765Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Rotate Secret",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers/97de22f5-8c6d-4f06-9adc-be660950a291/rotate-secret",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers",
+								"97de22f5-8c6d-4f06-9adc-be660950a291",
+								"rotate-secret"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Subscriber",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n     \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n  \"eventTypes\": [\"user.created\", \"order.completed\"],\n  \"isActive\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/subscribers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"subscribers"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 13:37:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "/api/subscribers/cb77b65c-bc08-4e77-b460-0c8ea88b8ebe/status"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"cb77b65c-bc08-4e77-b460-0c8ea88b8ebe\",\n    \"tenantId\": \"tenant-123\",\n    \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n    \"eventTypes\": [\n        \"user.created\",\n        \"order.completed\"\n    ],\n    \"keyId\": \"0e07235fd7f64a08\",\n    \"secret\": \"8eITYHVVZWJKiJ+JTp7G+jmrztD+QC+oAmV5JewU9O4=\",\n    \"createdAt\": \"2025-09-10T13:37:55.1158765Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Subscribers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Subscribers",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/subscribers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"subscribers"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 12:22:26 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"790cb49c-9188-4348-a4bc-166226bf6e7f\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"30365755343c4692\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:17:16.4250998\"\n    },\n    {\n        \"id\": \"cc453f3e-e577-4f80-8d7e-3632b5309eec\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"9fcaa6a92be549ac\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:17:11.7626268\"\n    },\n    {\n        \"id\": \"3c05be11-e408-44aa-88d4-5544a49f763f\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"d0b7a81c8f1b465a\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:14:54.9200105\"\n    },\n    {\n        \"id\": \"c88b76e3-759d-4e28-bbba-8bf3c74e3494\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"151884c5031745cb\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T12:04:31.1285761\"\n    },\n    {\n        \"id\": \"709dbbd8-7b75-46cf-8da5-98bf4601cbdc\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"fd31df78e6d44f39\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:02:22.349985\"\n    },\n    {\n        \"id\": \"318f0066-ba67-4a71-852a-a55f166278e1\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"cf21e664cdc74af5\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:17:17.2656572\"\n    },\n    {\n        \"id\": \"3662ba9e-acef-4dc0-b935-aaa750e86354\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"e21a294086fe48db\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:16:51.5263212\"\n    },\n    {\n        \"id\": \"02b91b53-033d-4769-9ddb-b07a445793e6\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"65f0d405f9cd404b\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:17:15.5921309\"\n    },\n    {\n        \"id\": \"607c52e5-9806-4469-b77d-e1f87e41812c\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"1be0de9fa7db4fdd\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T11:17:14.802928\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Subscriber by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers/?subscriberId=7f313a74-3147-4cbe-a403-0587dde35990",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers",
+								""
+							],
+							"query": [
+								{
+									"key": "subscriberId",
+									"value": "7f313a74-3147-4cbe-a403-0587dde35990"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Subscriber by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/subscribers/?subscriberId=7f313a74-3147-4cbe-a403-0587dde35990",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"subscribers",
+										""
+									],
+									"query": [
+										{
+											"key": "subscriberId",
+											"value": "7f313a74-3147-4cbe-a403-0587dde35990"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 13:16:10 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"7f313a74-3147-4cbe-a403-0587dde35990\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"102e0ede00ba418a\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T13:05:03.862857\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Subscriber status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers/7f313a74-3147-4cbe-a403-0587dde35990/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers",
+								"7f313a74-3147-4cbe-a403-0587dde35990",
+								"status"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Subscriber by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/subscribers/?subscriberId=7f313a74-3147-4cbe-a403-0587dde35990",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"subscribers",
+										""
+									],
+									"query": [
+										{
+											"key": "subscriberId",
+											"value": "7f313a74-3147-4cbe-a403-0587dde35990"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 13:16:10 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"7f313a74-3147-4cbe-a403-0587dde35990\",\n        \"tenantId\": \"tenant-123\",\n        \"callbackUrl\": \"http://localhost:8080/api/webhook/receive\",\n        \"keyId\": \"102e0ede00ba418a\",\n        \"eventTypes\": [\n            \"user.created\",\n            \"order.completed\"\n        ],\n        \"isActive\": true,\n        \"createdAt\": \"2025-09-10T13:05:03.862857\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Update Subscriber",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"url\": \"https://webhook.site/updated-id\",\n  \"eventTypes\": [\"user.created\", \"user.updated\", \"order.completed\"],\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers",
+								"{{subscriberId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Subscriber",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscribers",
+								"{{subscriberId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Send User Created Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Idempotency-Key",
+								"value": "user-created-{{$randomUUID}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"eventType\": \"user.created\",\n  \"payload\": {\n    \"userId\": \"user-{{$randomInt}}\",\n    \"email\": \"user{{$randomInt}}@example.com\",\n    \"name\": \"Test User\",\n    \"createdAt\": \"{{$isoTimestamp}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"events"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Send User Created Event",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Idempotency-Key",
+										"value": "user-created-{{$randomUUID}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"eventType\": \"user.created\",\n  \"payload\": {\n    \"userId\": \"user-{{$randomInt}}\",\n    \"email\": \"user{{$randomInt}}@example.com\",\n    \"name\": \"Test User\",\n    \"createdAt\": \"{{$isoTimestamp}}\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/events",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"events"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 13:43:21 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "/api/events/4e5e1c24-ba68-4d87-84bd-53bd62066f03"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"eventId\": \"4e5e1c24-ba68-4d87-84bd-53bd62066f03\",\n    \"tenantId\": \"tenant-123\",\n    \"eventType\": \"user.created\",\n    \"createdAt\": \"2025-09-10T13:43:18.7941444Z\",\n    \"matchedSubscribers\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Send Order Completed Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Idempotency-Key",
+								"value": "order-completed-{{$randomUUID}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"eventType\": \"order.completed\",\n  \"payload\": {\n    \"orderId\": \"order-{{$randomInt}}\",\n    \"customerId\": \"customer-{{$randomInt}}\",\n    \"amount\": {{$randomInt}},\n    \"currency\": \"USD\",\n    \"completedAt\": \"{{$isoTimestamp}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"events"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Send Order Completed Event",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Idempotency-Key",
+										"value": "order-completed-{{$randomUUID}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"eventType\": \"order.completed\",\n  \"payload\": {\n    \"orderId\": \"order-{{$randomInt}}\",\n    \"customerId\": \"customer-{{$randomInt}}\",\n    \"amount\": {{$randomInt}},\n    \"currency\": \"USD\",\n    \"completedAt\": \"{{$isoTimestamp}}\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/events",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"events"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Sep 2025 11:17:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "/api/events/e076d286-5431-4295-bb79-278ff1940c05"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"eventId\": \"e076d286-5431-4295-bb79-278ff1940c05\",\n    \"tenantId\": \"tenant-123\",\n    \"eventType\": \"order.completed\",\n    \"createdAt\": \"2025-09-10T11:17:20.7268822Z\",\n    \"matchedSubscribers\": 8\n}"
+						}
+					]
+				},
+				{
+					"name": "Send Event with Duplicate Idempotency Key",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Idempotency-Key",
+								"value": "duplicate-key-123"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"eventType\": \"user.created\",\n  \"payload\": {\n    \"userId\": \"duplicate-test\",\n    \"email\": \"duplicate@example.com\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deliveries",
+			"item": [
+				{
+					"name": "Get All Deliveries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/deliveries",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"deliveries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deliveries by Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/deliveries?status=Success&page=1&pageSize=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"deliveries"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "Success"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Failed Deliveries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/deliveries?status=Failed&fromDate=2024-01-01&toDate=2024-12-31",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"deliveries"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "Failed"
+								},
+								{
+									"key": "fromDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "toDate",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deliveries by Event ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/deliveries?eventId={{eventId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"deliveries"
+							],
+							"query": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "tenantId",
+			"value": "tenant-123",
+			"type": "string"
+		}
+	]
+}

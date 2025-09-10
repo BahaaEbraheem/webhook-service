@@ -1,115 +1,200 @@
 @startuml Webhook Service Architecture
-!theme aws-orange
-title خدمة الويب هوك - Webhook Service Architecture
+!theme plain
+title Webhook Service Architecture - Bahaa Ebraheem Technical Task Implementation
 
-!define RECTANGLE class
+actor "API Clients" as Clients
+actor "Webhook Subscribers" as Subscribers
 
 package "Frontend Layer" {
-  [Angular UI\n(Port 4200)] as Frontend
-  note right of Frontend
-    واجهة مستخدم لعرض سجلات التسليم
-    User interface for delivery logs
+  component [Angular UI\nPort 4200] as Angular
+  note right of Angular
+    Deliveries Viewer Component
+    - Form inputs (eventId, subscriberId, status)
+    - Search functionality
+    - Paginated results table
+
+    Implementation: frontend/src/app/components/delivery-logs/
   end note
 }
 
 package "API Layer" {
-  [ASP.NET Core API\n(Port 8080)] as API
+  component [ASP.NET Core API\nMinimal API\nPort 8080/5000] as API
+
+  component [Subscriber Endpoints] as SubEndpoints
+  component [Event Endpoints] as EventEndpoints
+  component [Delivery Endpoints] as DeliveryEndpoints
+  component [Health Endpoints] as HealthEndpoints
+
   note right of API
-    نقاط النهاية REST
-    REST API endpoints
-    - Events
-    - Subscribers  
-    - Deliveries
-    - Health
+    Required Endpoints:
+    - POST /api/subscribers
+    - POST /api/subscribers/{id}/rotate-secret
+    - GET /api/subscribers/{id}/status
+    - POST /api/events
+    - GET /api/deliveries
+    - GET /health
+    - GET /metrics
+
+    Implementation: src/WebhookService.Api/Endpoints/
   end note
 }
 
-package "Business Logic" {
-  [Event Service] as EventSvc
-  [Subscriber Service] as SubSvc
-  [Delivery Service] as DelSvc
-  [Webhook Dispatcher] as Dispatcher
-  [Retry Service] as RetrySvc
-  [Signature Service] as SigSvc
+package "Business Layer" {
+  component [Event Service] as EventService
+  component [Subscriber Service] as SubscriberService
+  component [Webhook Dispatcher] as WebhookDispatcher
+  component [Signature Service] as SignatureService
+  component [Delivery Service] as DeliveryService
+  component [Retry Service] as RetryService
+  component [Circuit Breaker] as CircuitBreaker
+
+  note right of EventService
+    Features:
+    - Idempotency support (X-Idempotency-Key)
+    - Subscriber matching by tenantId + eventType
+    - Parallel webhook dispatch
+
+    Implementation:
+    src/WebhookService.Infrastructure/Services/EventService.cs
+  end note
+
+  note right of WebhookDispatcher
+    Security & Reliability:
+    - HMAC-SHA256 signature generation
+    - 5s timeout per delivery
+    - Exponential backoff (2s, 10s, 30s, 2m, 10m)
+    - DLQ after max retries
+    - Replay prevention
+
+    Implementation:
+    src/WebhookService.Infrastructure/Services/WebhookDispatcher.cs
+  end note
 }
 
 package "Infrastructure" {
-  [Entity Framework\nCore] as EF
-  [Redis Cache] as Cache
-  [HTTP Client] as HttpClient
-}
+  component [Entity Framework Core] as EF
+  component [Redis Cache] as CacheService
+  component [HTTP Client] as HttpClient
 
-package "Data Layer" {
-  database "SQL Server\n(Port 1433)" as DB {
-    [Subscribers] as SubTable
-    [Events] as EventTable
-    [Deliveries] as DelTable
-  }
-  
-  database "Redis\n(Port 6379)" as Redis {
-    [Subscriber Cache] as SubCache
-    [Circuit Breaker] as Circuit
-  }
-}
+  note right of CacheService
+    Redis Caching:
+    - Subscriber configs: subs:{tenantId}
+    - TTL: 60 seconds
+    - No secrets cached (in-memory only)
 
-package "External Services" {
-  [Webhook Endpoints] as Webhooks
-  note right of Webhooks
-    نقاط نهاية المشتركين الخارجية
-    External subscriber endpoints
+    Implementation:
+    src/WebhookService.Infrastructure/Services/CacheService.cs
   end note
 }
 
-package "Monitoring" {
-  [Prometheus Metrics] as Metrics
-  [Health Checks] as Health
-  [Structured Logs] as Logs
+package "Data Layer" {
+  database "SQL Server\nPort 1433" as DB
+  database "Redis\nPort 6379" as Redis
+
+  note right of DB
+    Tables:
+    - Subscribers (Id, TenantId, CallbackUrl, EventTypes, EncryptedSecret, KeyId)
+    - Events (Id, TenantId, EventType, Payload, IdempotencyKey)
+    - Deliveries (Id, EventId, SubscriberId, Status, AttemptNumber, HttpStatusCode)
+
+    Features:
+    - Unique constraints on IdempotencyKey
+    - Indexes for performance
+    - Foreign key relationships
+    - JSON column for EventTypes
+    - AES-256 encrypted secrets
+
+    Implementation: src/WebhookService.Infrastructure/Migrations/
+  end note
+
+  note right of Redis
+    Cache Keys:
+    - subs:{tenantId} (Subscriber configs, TTL: 60s)
+    - cb:{endpoint} (Circuit breaker state)
+
+    No secrets cached (in-memory only)
+  end note
 }
 
-' Connections
-Frontend --> API : HTTP/REST
-API --> EventSvc
-API --> SubSvc  
-API --> DelSvc
-API --> Health
+package "External Services" {
+  component [Webhook Endpoints] as Webhooks
 
-EventSvc --> Dispatcher
-EventSvc --> EF
-SubSvc --> EF
-SubSvc --> Cache
-DelSvc --> EF
+  note right of Webhooks
+    Webhook Security:
+    Headers:
+    - X-SWR-Signature: v1,ts=<timestamp>,kid=<keyId>,sig=<hmac>
+    - X-SWR-Event-Id: <uuid>
 
-Dispatcher --> HttpClient
-Dispatcher --> SigSvc
-Dispatcher --> DelSvc
+    Signature Format:
+    HMAC-SHA256(version:timestamp:eventId:SHA256(body))
 
-RetrySvc --> DelSvc
-RetrySvc --> Dispatcher
-
-EF --> DB
-Cache --> Redis
-
-HttpClient --> Webhooks
-Dispatcher --> Metrics
-RetrySvc --> Metrics
-
-API --> Metrics
-API --> Logs
-
-' Styling
-skinparam rectangle {
-  BackgroundColor LightBlue
-  BorderColor DarkBlue
+    Time Drift: ±300s acceptance window
+  end note
 }
 
-skinparam database {
-  BackgroundColor LightGreen
-  BorderColor DarkGreen
+package "Monitoring & Observability" {
+  component [Prometheus Metrics] as Metrics
+  component [Health Checks] as Health
+  component [Structured Logs] as Logs
+
+  note right of Metrics
+    Prometheus Metrics:
+    - swr_events_total (counter)
+    - swr_deliveries_total{status} (counter)
+    - swr_retries_total (counter)
+    - swr_delivery_latency_ms (histogram)
+    - swr_circuit_open_total (gauge)
+
+    Implementation: src/WebhookService.Api/Program.cs
+  end note
+
+  note right of Logs
+    Structured Logging:
+    Format: {traceId, eventId, subscriberId,
+             attemptNo, status, durationMs,
+             httpStatus, error}
+
+    Features:
+    - Bilingual logging (Arabic/English)
+    - JSON format
+    - Correlation IDs for tracing
+  end note
 }
 
-skinparam package {
-  BackgroundColor LightYellow
-  BorderColor Orange
-}
+' Relationships and Data Flow
+Clients --> API : HTTP Requests
+Angular --> API : AJAX Calls
+Subscribers <-- WebhookDispatcher : Webhook Delivery
+
+' API to Business Layer
+API --> EventService : Event Ingestion
+API --> SubscriberService : Subscriber Management
+API --> DeliveryService : Query Deliveries
+
+' Business Layer Interactions
+EventService --> WebhookDispatcher : Dispatch Webhooks
+SubscriberService --> SignatureService : Encrypt/Decrypt Secrets
+WebhookDispatcher --> SignatureService : Generate Signatures
+WebhookDispatcher --> CircuitBreaker : Failure Protection
+RetryService --> WebhookDispatcher : Retry Failed Deliveries
+
+' Infrastructure Connections
+EventService --> EF : Persist Events
+SubscriberService --> EF : Persist Subscribers
+DeliveryService --> EF : Query Deliveries
+SubscriberService --> CacheService : Cache Subscribers
+WebhookDispatcher --> HttpClient : HTTP Requests
+
+' Data Layer Connections
+EF --> DB : Database Operations
+CacheService --> Redis : Cache Operations
+
+' External Connections
+HttpClient --> Webhooks : Webhook Delivery
+
+' Monitoring Connections
+API --> Metrics : Record Metrics
+API --> Health : Health Checks
+API --> Logs : Structured Logging
 
 @enduml

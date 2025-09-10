@@ -1,27 +1,62 @@
 {
   "info": {
-    "name": "Webhook Service API",
-    "description": "خدمة الويب هوك - مجموعة شاملة لاختبار جميع نقاط النهاية\nWebhook Service - Comprehensive collection for testing all endpoints",
+    "name": "Webhook Service API - Technical Task Implementation",
+    "description": "Complete API collection for Bahaa Ebraheem's webhook service technical task.\n\nImplements all required endpoints:\n• POST /api/subscribers → Create subscriber\n• POST /api/subscribers/{id}/rotate-secret → Rotate secret\n• GET /api/subscribers/{id}/status → Subscriber status\n• POST /api/events → Ingest event\n• GET /api/deliveries?... → Delivery logs\n• GET /health → Health check\n• GET /metrics → Prometheus metrics\n\nFeatures:\n✅ HMAC-SHA256 signature validation\n✅ Idempotency support (X-Idempotency-Key)\n✅ Exponential backoff retry mechanism\n✅ Redis caching with TTL\n✅ Structured logging & metrics\n✅ Circuit breaker pattern",
+    "version": "1.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "description": "Docker container URL (port 5000 maps to internal 8080)"
+    },
+    {
+      "key": "localUrl", 
       "value": "http://localhost:8080",
-      "type": "string"
+      "description": "Local development URL"
     },
     {
       "key": "tenantId",
-      "value": "tenant-123",
-      "type": "string"
+      "value": "tenant-demo",
+      "description": "Test tenant ID for subscriber matching"
+    },
+    {
+      "key": "subscriberId",
+      "value": "",
+      "description": "Auto-populated from create subscriber response"
+    },
+    {
+      "key": "eventId",
+      "value": "",
+      "description": "Auto-populated from create event response"
     }
   ],
   "item": [
     {
-      "name": "Health & Monitoring",
+      "name": "🏥 Health & Monitoring",
+      "description": "Health checks and Prometheus metrics endpoints",
       "item": [
         {
           "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Health check returns 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains status', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('status');",
+                  "    pm.expect(response).to.have.property('checks');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -29,12 +64,32 @@
               "raw": "{{baseUrl}}/health",
               "host": ["{{baseUrl}}"],
               "path": ["health"]
-            }
+            },
+            "description": "System health check - validates database and Redis connectivity\n\n**Implementation**: `src/WebhookService.Api/Endpoints/HealthEndpoints.cs` (lines 40-124)\n\n**Features**:\n- Database connectivity test\n- Redis connectivity test  \n- System memory usage\n- Response time measurement"
           },
           "response": []
         },
         {
           "name": "Prometheus Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Metrics endpoint accessible', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Contains webhook metrics', function () {",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.include('swr_events_total');",
+                  "    pm.expect(body).to.include('swr_deliveries_total');",
+                  "    pm.expect(body).to.include('swr_delivery_latency_ms');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -42,17 +97,41 @@
               "raw": "{{baseUrl}}/metrics",
               "host": ["{{baseUrl}}"],
               "path": ["metrics"]
-            }
+            },
+            "description": "Prometheus metrics endpoint\n\n**Implementation**: `src/WebhookService.Api/Program.cs` (lines 76-81)\n\n**Metrics**:\n- `swr_events_total` - Total events processed\n- `swr_deliveries_total{status}` - Delivery attempts by status\n- `swr_retries_total` - Total retry attempts\n- `swr_delivery_latency_ms` - Delivery latency histogram\n- `swr_circuit_open_total` - Circuit breaker status"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Subscribers",
+      "name": "👥 Subscribers Management",
+      "description": "Subscriber CRUD operations with secret rotation",
       "item": [
         {
           "name": "Create Subscriber",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Subscriber created successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response contains subscriber data', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.have.property('secret');",
+                  "    pm.expect(response).to.have.property('keyId');",
+                  "    ",
+                  "    // Store subscriber ID for other requests",
+                  "    pm.collectionVariables.set('subscriberId', response.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -63,84 +142,112 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"url\": \"https://webhook.site/unique-id\",\n  \"eventTypes\": [\"user.created\", \"order.completed\"],\n  \"isActive\": true\n}"
+              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"callbackUrl\": \"https://webhook.site/{{$randomUUID}}\",\n  \"eventTypes\": [\"user.created\", \"order.completed\", \"payment.processed\"]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/subscribers",
               "host": ["{{baseUrl}}"],
               "path": ["api", "subscribers"]
-            }
+            },
+            "description": "Create new webhook subscriber\n\n**Implementation**: `src/WebhookService.Infrastructure/Services/SubscriberService.cs` (lines 51-96)\n\n**Features**:\n- Generates encrypted secret with AES-256\n- Creates unique KeyId for signature validation\n- Invalidates Redis cache for tenant\n- Returns secret only on creation (never again)\n\n**Security**: Secret is encrypted before storage and never logged"
           },
           "response": []
         },
         {
-          "name": "Get All Subscribers",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/subscribers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "subscribers"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Subscriber by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "subscribers", "{{subscriberId}}"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Subscriber",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
+          "name": "Rotate Subscriber Secret",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Secret rotated successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains new secret', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('keyId');",
+                  "    pm.expect(response).to.have.property('secret');",
+                  "    pm.expect(response).to.have.property('updatedAt');",
+                  "});"
+                ]
               }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"url\": \"https://webhook.site/updated-id\",\n  \"eventTypes\": [\"user.created\", \"user.updated\", \"order.completed\"],\n  \"isActive\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "subscribers", "{{subscriberId}}"]
             }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}/rotate-secret",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subscribers", "{{subscriberId}}", "rotate-secret"]
+            },
+            "description": "Rotate subscriber secret key\n\n**Implementation**: `src/WebhookService.Infrastructure/Services/SubscriberService.cs` (lines 102-134)\n\n**Features**:\n- Generates new encrypted secret\n- Creates new KeyId\n- Invalidates Redis cache\n- Updates timestamp\n\n**Security**: Old secret is immediately invalidated"
           },
           "response": []
         },
         {
-          "name": "Delete Subscriber",
+          "name": "Get Subscriber Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status retrieved successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains status data', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.have.property('isActive');",
+                  "    pm.expect(response).to.have.property('eventTypes');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "DELETE",
+            "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}",
+              "raw": "{{baseUrl}}/api/subscribers/{{subscriberId}}/status",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "subscribers", "{{subscriberId}}"]
-            }
+              "path": ["api", "subscribers", "{{subscriberId}}", "status"]
+            },
+            "description": "Get subscriber status and configuration\n\n**Implementation**: `src/WebhookService.Infrastructure/Services/SubscriberService.cs` (lines 136-159)\n\n**Features**:\n- Returns subscriber configuration\n- Shows active status\n- Lists subscribed event types\n- No sensitive data (secret/keyId excluded)"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Events",
+      "name": "📨 Events Ingestion",
+      "description": "Event publishing with idempotency support",
       "item": [
         {
-          "name": "Send User Created Event",
+          "name": "Send Event with Idempotency",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Event created successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response contains event data', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('eventId');",
+                  "    pm.expect(response).to.have.property('matchedSubscribers');",
+                  "    ",
+                  "    // Store event ID for delivery queries",
+                  "    pm.collectionVariables.set('eventId', response.eventId);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -161,12 +268,25 @@
               "raw": "{{baseUrl}}/api/events",
               "host": ["{{baseUrl}}"],
               "path": ["api", "events"]
-            }
+            },
+            "description": "Ingest event with idempotency protection\n\n**Implementation**: `src/WebhookService.Infrastructure/Services/EventService.cs` (lines 38-105)\n\n**Features**:\n- Idempotency key support (header or body)\n- Subscriber matching by tenantId and eventType\n- Parallel webhook dispatch\n- Metrics tracking\n\n**Security**: Duplicate events are rejected with 409 Conflict"
           },
           "response": []
         },
         {
           "name": "Send Order Completed Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Event processed successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -176,7 +296,7 @@
               },
               {
                 "key": "X-Idempotency-Key",
-                "value": "order-completed-{{$randomUUID}}"
+                "value": "order-{{$randomUUID}}"
               }
             ],
             "body": {
@@ -187,67 +307,102 @@
               "raw": "{{baseUrl}}/api/events",
               "host": ["{{baseUrl}}"],
               "path": ["api", "events"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Send Event with Duplicate Idempotency Key",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Idempotency-Key",
-                "value": "duplicate-key-123"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"eventType\": \"user.created\",\n  \"payload\": {\n    \"userId\": \"duplicate-test\",\n    \"email\": \"duplicate@example.com\"\n  }\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/events",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "events"]
-            }
+            "description": "Send order completion event to test event type filtering"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Deliveries",
+      "name": "📋 Delivery Logs",
+      "description": "Query delivery attempts and status",
       "item": [
         {
           "name": "Get All Deliveries",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Deliveries retrieved successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains delivery data', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('deliveries');",
+                  "    pm.expect(response).to.have.property('totalCount');",
+                  "    pm.expect(response).to.have.property('page');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/deliveries",
+              "raw": "{{baseUrl}}/api/deliveries?page=1&pageSize=10",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "deliveries"]
-            }
+              "path": ["api", "deliveries"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get paginated delivery logs\n\n**Implementation**: `src/WebhookService.Infrastructure/Services/DeliveryService.cs` (lines 28-75)\n\n**Features**:\n- Pagination support\n- Filtering by eventId, subscriberId, status\n- Date range filtering\n- Includes retry attempts and error details"
           },
           "response": []
         },
         {
-          "name": "Get Deliveries by Status",
+          "name": "Get Deliveries by Event",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/deliveries?status=Success&page=1&pageSize=10",
+              "raw": "{{baseUrl}}/api/deliveries?eventId={{eventId}}&page=1&pageSize=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveries"],
+              "query": [
+                {
+                  "key": "eventId",
+                  "value": "{{eventId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Filter deliveries by specific event ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Failed Deliveries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveries?status=2&page=1&pageSize=10",
               "host": ["{{baseUrl}}"],
               "path": ["api", "deliveries"],
               "query": [
                 {
                   "key": "status",
-                  "value": "Success"
+                  "value": "2",
+                  "description": "Failed status (2)"
                 },
                 {
                   "key": "page",
@@ -258,53 +413,8 @@
                   "value": "10"
                 }
               ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Failed Deliveries",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/deliveries?status=Failed&fromDate=2024-01-01&toDate=2024-12-31",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "deliveries"],
-              "query": [
-                {
-                  "key": "status",
-                  "value": "Failed"
-                },
-                {
-                  "key": "fromDate",
-                  "value": "2024-01-01"
-                },
-                {
-                  "key": "toDate",
-                  "value": "2024-12-31"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Deliveries by Event ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/deliveries?eventId={{eventId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "deliveries"],
-              "query": [
-                {
-                  "key": "eventId",
-                  "value": "{{eventId}}"
-                }
-              ]
-            }
+            },
+            "description": "Filter deliveries by failed status\n\nStatus values:\n- 0: Pending\n- 1: Success\n- 2: Failed\n- 3: Retrying\n- 4: DLQ (Dead Letter Queue)"
           },
           "response": []
         }

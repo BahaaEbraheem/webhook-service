@@ -28,11 +28,11 @@ export interface DeliveryPagedResponse {
 }
 
 export enum DeliveryStatus {
-  Pending = 'Pending',
-  Success = 'Success',
-  Failed = 'Failed',
-  Retrying = 'Retrying',
-  DLQ = 'DLQ'
+  Pending = 0,
+  Success = 1,
+  Failed = 2,
+  Retrying = 3,
+  DLQ = 4
 }
 
 export interface DeliveryQueryRequest {

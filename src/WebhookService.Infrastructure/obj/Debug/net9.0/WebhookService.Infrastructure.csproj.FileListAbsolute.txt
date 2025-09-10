@@ -15,3 +15,4 @@ C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Infrastructure
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Infrastructure\obj\Debug\net9.0\WebhookService.Infrastructure.pdb
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Infrastructure\obj\Debug\net9.0\WebhookService.Infrastructure.genruntimeconfig.cache
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Infrastructure\obj\Debug\net9.0\ref\WebhookService.Infrastructure.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Infrastructure\obj\Debug\net9.0\WebhookService.Infrastructure.sourcelink.json

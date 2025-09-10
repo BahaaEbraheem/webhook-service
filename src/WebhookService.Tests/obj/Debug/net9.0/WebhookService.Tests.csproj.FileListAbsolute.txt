@@ -408,3 +408,4 @@ C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Tests\bin\Debu
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Tests\bin\Debug\net9.0\WebhookService.Core.dll
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Tests\bin\Debug\net9.0\WebhookService.Core.pdb
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Tests\obj\Debug\net9.0\MvcTestingAppManifest.json
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Tests\obj\Debug\net9.0\WebhookService.Tests.sourcelink.json

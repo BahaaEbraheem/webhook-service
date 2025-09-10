@@ -73,6 +73,7 @@ app.MapSubscriberEndpoints();
 app.MapEventEndpoints();
 app.MapDeliveryEndpoints();
 app.MapHealthEndpoints();
+app.MapWebhookReceiverEndpoints();
 
 // تشغيل الترحيلات - Run migrations
 using (var scope = app.Services.CreateScope())

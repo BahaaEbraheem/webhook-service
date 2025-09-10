@@ -81,7 +81,7 @@ curl -X POST http://localhost:8080/api/subscribers \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "tenant-123",
-    "url": "https://example.com/webhook",
+     "callbackUrl": "http://localhost:8080/api/webhook/receive",
     "eventTypes": ["user.created", "order.completed"],
     "isActive": true
   }'

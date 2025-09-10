@@ -9,3 +9,4 @@ C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\refint\WebhookService.Core.dll
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.pdb
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\ref\WebhookService.Core.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.sourcelink.json

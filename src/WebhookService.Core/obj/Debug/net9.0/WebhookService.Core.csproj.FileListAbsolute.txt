@@ -1,0 +1,11 @@
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\bin\Debug\net9.0\WebhookService.Core.deps.json
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\bin\Debug\net9.0\WebhookService.Core.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\bin\Debug\net9.0\WebhookService.Core.pdb
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.AssemblyInfoInputs.cache
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.AssemblyInfo.cs
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.csproj.CoreCompileInputs.cache
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\refint\WebhookService.Core.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\WebhookService.Core.pdb
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Core\obj\Debug\net9.0\ref\WebhookService.Core.dll

@@ -1,0 +1,275 @@
+[
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.DeliveryEndpoints",
+    "Method": "GetDeliveries",
+    "RelativePath": "api/deliveries/",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "subscriberId",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.Nullable\u00601[[WebhookService.Core.Entities.DeliveryStatus, WebhookService.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "fromDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "toDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.DTOs.DeliveryPagedResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "Tags": [
+      "Deliveries"
+    ],
+    "EndpointName": "GetDeliveries",
+    "Summary": "\u0627\u0644\u0628\u062D\u062B \u0641\u064A \u0639\u0645\u0644\u064A\u0627\u062A \u0627\u0644\u062A\u0633\u0644\u064A\u0645 - Search deliveries"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.EventEndpoints",
+    "Method": "CreateEvent",
+    "RelativePath": "api/events/",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebhookService.Core.DTOs.CreateEventRequest",
+        "IsRequired": true
+      },
+      {
+        "Name": "X-Idempotency-Key",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.DTOs.CreateEventResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 409
+      }
+    ],
+    "Tags": [
+      "Events"
+    ],
+    "EndpointName": "CreateEvent",
+    "Summary": "\u0625\u0646\u0634\u0627\u0621 \u062D\u062F\u062B \u062C\u062F\u064A\u062F - Create new event"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
+    "Method": "CreateSubscriber",
+    "RelativePath": "api/subscribers/",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebhookService.Core.DTOs.CreateSubscriberRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.DTOs.CreateSubscriberResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "Tags": [
+      "Subscribers"
+    ],
+    "EndpointName": "CreateSubscriber",
+    "Summary": "\u0625\u0646\u0634\u0627\u0621 \u0645\u0634\u062A\u0631\u0643 \u062C\u062F\u064A\u062F - Create new subscriber"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
+    "Method": "RotateSecret",
+    "RelativePath": "api/subscribers/{id:guid}/rotate-secret",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.DTOs.RotateSecretResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Subscribers"
+    ],
+    "EndpointName": "RotateSecret",
+    "Summary": "\u062A\u062F\u0648\u064A\u0631 \u0627\u0644\u0645\u0641\u062A\u0627\u062D \u0627\u0644\u0633\u0631\u064A - Rotate secret key"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
+    "Method": "GetSubscriberStatus",
+    "RelativePath": "api/subscribers/{id:guid}/status",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.DTOs.SubscriberStatusResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Subscribers"
+    ],
+    "EndpointName": "GetSubscriberStatus",
+    "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u062D\u0627\u0644\u0629 \u0627\u0644\u0645\u0634\u062A\u0631\u0643 - Get subscriber status"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.HealthEndpoints",
+    "Method": "GetHealth",
+    "RelativePath": "health",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Api.Models.HealthResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "WebhookService.Api.Models.HealthResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 503
+      }
+    ],
+    "Tags": [
+      "Health"
+    ],
+    "EndpointName": "GetHealth",
+    "Summary": "\u0641\u062D\u0635 \u0635\u062D\u0629 \u0627\u0644\u0646\u0638\u0627\u0645 - System health check"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.HealthEndpoints",
+    "Method": "GetMetrics",
+    "RelativePath": "metrics",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "Tags": [
+      "Metrics"
+    ],
+    "EndpointName": "GetMetrics",
+    "Summary": "\u0645\u0642\u0627\u064A\u064A\u0633 Prometheus - Prometheus metrics"
+  }
+]

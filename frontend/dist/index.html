@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدمة الويب هوك - Webhook Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            color: white;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .status-card.healthy {
+            border-left: 5px solid #28a745;
+        }
+        
+        .status-card.error {
+            border-left: 5px solid #dc3545;
+        }
+        
+        .status-card h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 0.5rem;
+        }
+        
+        .status-indicator.healthy {
+            background: #28a745;
+        }
+        
+        .status-indicator.error {
+            background: #dc3545;
+        }
+        
+        .api-section {
+            margin-top: 2rem;
+        }
+        
+        .api-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3498db;
+        }
+        
+        .endpoint-method {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        
+        .endpoint-method.post {
+            background: #28a745;
+        }
+        
+        .endpoint-method.get {
+            background: #17a2b8;
+        }
+        
+        .endpoint-method.put {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .endpoint-method.delete {
+            background: #dc3545;
+        }
+        
+        .test-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #2980b9;
+        }
+        
+        .footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bilingual {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .bilingual {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>خدمة الويب هوك - Webhook Service</h1>
+        <p>نظام إدارة وإرسال الويب هوك الآمن - Secure Webhook Management System</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="bilingual">
+                <h2 class="rtl">حالة النظام</h2>
+                <h2 class="ltr">System Status</h2>
+            </div>
+            
+            <div class="status-grid">
+                <div class="status-card healthy">
+                    <h3>
+                        <span class="rtl">API الخلفي</span>
+                        <span class="ltr">Backend API</span>
+                        <span class="status-indicator healthy"></span>
+                    </h3>
+                    <p>Port 8080 - Running</p>
+                </div>
+                
+                <div class="status-card healthy">
+                    <h3>
+                        <span class="rtl">قاعدة البيانات</span>
+                        <span class="ltr">SQL Server</span>
+                        <span class="status-indicator healthy"></span>
+                    </h3>
+                    <p>Port 1433 - Connected</p>
+                </div>
+                
+                <div class="status-card healthy">
+                    <h3>
+                        <span class="rtl">ذاكرة التخزين المؤقت</span>
+                        <span class="ltr">Redis Cache</span>
+                        <span class="status-indicator healthy"></span>
+                    </h3>
+                    <p>Port 6379 - Connected</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card api-section">
+            <div class="bilingual">
+                <h2 class="rtl">نقاط النهاية المتاحة</h2>
+                <h2 class="ltr">Available API Endpoints</h2>
+            </div>
+            
+            <div class="endpoint">
+                <strong>/health</strong>
+                <span class="endpoint-method get">GET</span>
+                <p class="rtl">فحص حالة النظام والخدمات</p>
+                <p class="ltr">System and services health check</p>
+                <button class="test-button" onclick="testEndpoint('/health')">اختبار - Test</button>
+            </div>
+            
+            <div class="endpoint">
+                <strong>/api/subscribers</strong>
+                <span class="endpoint-method post">POST</span>
+                <p class="rtl">إنشاء مشترك جديد</p>
+                <p class="ltr">Create new subscriber</p>
+                <button class="test-button" onclick="showExample('subscriber')">مثال - Example</button>
+            </div>
+            
+            <div class="endpoint">
+                <strong>/api/events</strong>
+                <span class="endpoint-method post">POST</span>
+                <p class="rtl">إرسال حدث جديد</p>
+                <p class="ltr">Send new event</p>
+                <button class="test-button" onclick="showExample('event')">مثال - Example</button>
+            </div>
+            
+            <div class="endpoint">
+                <strong>/api/deliveries</strong>
+                <span class="endpoint-method get">GET</span>
+                <p class="rtl">عرض سجل عمليات التسليم</p>
+                <p class="ltr">View delivery logs</p>
+                <button class="test-button" onclick="testEndpoint('/api/deliveries?page=1&pageSize=10')">اختبار - Test</button>
+            </div>
+            
+            <div class="endpoint">
+                <strong>/metrics</strong>
+                <span class="endpoint-method get">GET</span>
+                <p class="rtl">مقاييس Prometheus</p>
+                <p class="ltr">Prometheus metrics</p>
+                <button class="test-button" onclick="testEndpoint('/metrics')">اختبار - Test</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="bilingual">
+            <span class="rtl">خدمة الويب هوك - تم التطوير بواسطة .NET 8</span>
+            <span class="ltr">Webhook Service - Developed with .NET 8</span>
+        </div>
+    </div>
+
+    <script>
+        async function testEndpoint(endpoint) {
+            try {
+                const response = await fetch(`http://localhost:8080${endpoint}`);
+                const data = await response.text();
+                
+                // Create a new window to show the response
+                const newWindow = window.open('', '_blank', 'width=800,height=600');
+                newWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>API Response</title>
+                            <style>
+                                body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+                                pre { background: white; padding: 15px; border-radius: 5px; overflow: auto; }
+                                .status { color: ${response.ok ? 'green' : 'red'}; font-weight: bold; }
+                            </style>
+                        </head>
+                        <body>
+                            <h2>Response for ${endpoint}</h2>
+                            <p class="status">Status: ${response.status} ${response.statusText}</p>
+                            <pre>${data}</pre>
+                        </body>
+                    </html>
+                `);
+            } catch (error) {
+                alert('خطأ في الاتصال - Connection Error: ' + error.message);
+            }
+        }
+        
+        function showExample(type) {
+            let example = '';
+            if (type === 'subscriber') {
+                example = `{
+  "tenantId": "company-123",
+  "callbackUrl": "https://your-app.com/webhook",
+  "eventTypes": ["user.created", "order.completed"]
+}`;
+            } else if (type === 'event') {
+                example = `{
+  "tenantId": "company-123",
+  "eventType": "user.created",
+  "payload": {
+    "userId": "user-456",
+    "email": "user@example.com",
+    "name": "John Doe"
+  },
+  "idempotencyKey": "unique-key-123"
+}`;
+            }
+            
+            const newWindow = window.open('', '_blank', 'width=600,height=400');
+            newWindow.document.write(`
+                <html>
+                    <head>
+                        <title>API Example</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 20px; }
+                            pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow: auto; }
+                            .copy-btn { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Example JSON for ${type}</h2>
+                        <pre id="example">${example}</pre>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('example').textContent)">Copy to Clipboard</button>
+                    </body>
+                </html>
+            `);
+        }
+    </script>
+</body>
+</html>

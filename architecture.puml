@@ -1,0 +1,115 @@
+@startuml Webhook Service Architecture
+!theme aws-orange
+title خدمة الويب هوك - Webhook Service Architecture
+
+!define RECTANGLE class
+
+package "Frontend Layer" {
+  [Angular UI\n(Port 4200)] as Frontend
+  note right of Frontend
+    واجهة مستخدم لعرض سجلات التسليم
+    User interface for delivery logs
+  end note
+}
+
+package "API Layer" {
+  [ASP.NET Core API\n(Port 8080)] as API
+  note right of API
+    نقاط النهاية REST
+    REST API endpoints
+    - Events
+    - Subscribers  
+    - Deliveries
+    - Health
+  end note
+}
+
+package "Business Logic" {
+  [Event Service] as EventSvc
+  [Subscriber Service] as SubSvc
+  [Delivery Service] as DelSvc
+  [Webhook Dispatcher] as Dispatcher
+  [Retry Service] as RetrySvc
+  [Signature Service] as SigSvc
+}
+
+package "Infrastructure" {
+  [Entity Framework\nCore] as EF
+  [Redis Cache] as Cache
+  [HTTP Client] as HttpClient
+}
+
+package "Data Layer" {
+  database "SQL Server\n(Port 1433)" as DB {
+    [Subscribers] as SubTable
+    [Events] as EventTable
+    [Deliveries] as DelTable
+  }
+  
+  database "Redis\n(Port 6379)" as Redis {
+    [Subscriber Cache] as SubCache
+    [Circuit Breaker] as Circuit
+  }
+}
+
+package "External Services" {
+  [Webhook Endpoints] as Webhooks
+  note right of Webhooks
+    نقاط نهاية المشتركين الخارجية
+    External subscriber endpoints
+  end note
+}
+
+package "Monitoring" {
+  [Prometheus Metrics] as Metrics
+  [Health Checks] as Health
+  [Structured Logs] as Logs
+}
+
+' Connections
+Frontend --> API : HTTP/REST
+API --> EventSvc
+API --> SubSvc  
+API --> DelSvc
+API --> Health
+
+EventSvc --> Dispatcher
+EventSvc --> EF
+SubSvc --> EF
+SubSvc --> Cache
+DelSvc --> EF
+
+Dispatcher --> HttpClient
+Dispatcher --> SigSvc
+Dispatcher --> DelSvc
+
+RetrySvc --> DelSvc
+RetrySvc --> Dispatcher
+
+EF --> DB
+Cache --> Redis
+
+HttpClient --> Webhooks
+Dispatcher --> Metrics
+RetrySvc --> Metrics
+
+API --> Metrics
+API --> Logs
+
+' Styling
+skinparam rectangle {
+  BackgroundColor LightBlue
+  BorderColor DarkBlue
+}
+
+skinparam database {
+  BackgroundColor LightGreen
+  BorderColor DarkGreen
+}
+
+skinparam package {
+  BackgroundColor LightYellow
+  BorderColor Orange
+}
+
+@enduml

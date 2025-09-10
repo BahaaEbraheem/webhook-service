@@ -42,7 +42,7 @@ public static class DeliveryEndpoints
         [FromQuery] DateTime? fromDate = null,
         [FromQuery] DateTime? toDate = null,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 50)
+        [FromQuery] int pageSize = 10)
     {
         try
         {

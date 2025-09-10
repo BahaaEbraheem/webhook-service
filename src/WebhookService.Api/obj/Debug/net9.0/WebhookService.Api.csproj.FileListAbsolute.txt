@@ -195,3 +195,6 @@ C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\obj\Debug\
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\obj\Debug\net9.0\ref\WebhookService.Api.dll
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.InMemory.dll
 C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\obj\Debug\net9.0\WebhookService.Api.sourcelink.json
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Mantek_test\webhook-service\webhook-service\src\WebhookService.Api\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll

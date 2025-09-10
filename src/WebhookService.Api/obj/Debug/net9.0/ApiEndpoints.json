@@ -115,6 +115,29 @@
   },
   {
     "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
+    "Method": "GetAllSubscribers",
+    "RelativePath": "api/subscribers/",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[WebhookService.Core.DTOs.SubscriberDto, WebhookService.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "Tags": [
+      "Subscribers"
+    ],
+    "EndpointName": "GetAllSubscribers",
+    "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u062C\u0645\u064A\u0639 \u0627\u0644\u0645\u0634\u062A\u0631\u0643\u064A\u0646 - Get all subscribers"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
     "Method": "CreateSubscriber",
     "RelativePath": "api/subscribers/",
     "HttpMethod": "POST",
@@ -220,6 +243,93 @@
     ],
     "EndpointName": "GetSubscriberStatus",
     "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u062D\u0627\u0644\u0629 \u0627\u0644\u0645\u0634\u062A\u0631\u0643 - Get subscriber status"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.WebhookReceiverEndpoints",
+    "Method": "ReceiveWebhook",
+    "RelativePath": "api/webhook/receive",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Api.Endpoints.WebhookReceiveResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 401
+      }
+    ],
+    "Tags": [
+      "WebhookReceiver"
+    ],
+    "EndpointName": "ReceiveWebhook",
+    "Summary": "\u0627\u0633\u062A\u0642\u0628\u0627\u0644 \u0627\u0644\u0648\u064A\u0628 \u0647\u0648\u0643 - Receive webhook"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.WebhookReceiverEndpoints",
+    "Method": "ReceiveWebhookWithId",
+    "RelativePath": "api/webhook/receive/{subscriberId:guid}",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "subscriberId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Api.Endpoints.WebhookReceiveResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "WebhookReceiver"
+    ],
+    "EndpointName": "ReceiveWebhookWithId",
+    "Summary": "\u0627\u0633\u062A\u0642\u0628\u0627\u0644 \u0627\u0644\u0648\u064A\u0628 \u0647\u0648\u0643 \u0645\u0639 \u0645\u0639\u0631\u0641 \u0627\u0644\u0645\u0634\u062A\u0631\u0643 - Receive webhook with subscriber ID"
   },
   {
     "ContainingType": "WebhookService.Api.Endpoints.HealthEndpoints",

@@ -23,6 +23,11 @@ public static class SubscriberEndpoints
         var group = app.MapGroup("/api/subscribers")
             .WithTags("Subscribers")
             .WithOpenApi();
+        // الحصول على جميع المشتركين - Get all subscribers
+        group.MapGet("/", GetAllSubscribers)
+            .WithName("GetAllSubscribers")
+            .WithSummary("الحصول على جميع المشتركين - Get all subscribers")
+            .Produces<List<SubscriberDto>>(StatusCodes.Status200OK);
 
         // إنشاء مشترك جديد - Create new subscriber
         group.MapPost("/", CreateSubscriber)
@@ -44,6 +49,31 @@ public static class SubscriberEndpoints
             .WithSummary("الحصول على حالة المشترك - Get subscriber status")
             .Produces<SubscriberStatusResponse>(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound);
+    }
+    /// <summary>
+    /// جلب كل المشتركين
+    /// Create new subscriber
+    /// </summary>
+    private static async Task<IResult> GetAllSubscribers(
+    ISubscriberService subscriberService,
+    ILogger<Program> logger)
+    {
+        try
+        {
+            logger.LogInformation("طلب الحصول على جميع المشتركين");
+
+            var subscribers = await subscriberService.GetAllSubscribersAsync();
+
+            return Results.Ok(subscribers);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "خطأ أثناء الحصول على جميع المشتركين");
+            return Results.Problem(
+                title: "Internal Server Error",
+                detail: "حدث خطأ أثناء جلب كل المشتركين - An error occurred while getting all subscribers",
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     /// <summary>

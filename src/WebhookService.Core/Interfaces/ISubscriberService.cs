@@ -10,4 +10,5 @@ public interface ISubscriberService
     Task<SubscriberStatusResponse?> GetSubscriberStatusAsync(Guid subscriberId);
     Task<List<Subscriber>> GetSubscribersByTenantAndEventTypeAsync(string tenantId, string eventType);
     Task InvalidateCacheAsync(string tenantId);
+    Task<List<SubscriberDto>> GetAllSubscribersAsync();
 }

@@ -10,16 +10,43 @@ var builder = WebApplication.CreateBuilder(args);
 
 // إضافة الخدمات للحاوي - Add services to the container
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 // إعداد قاعدة البيانات - Configure database
 builder.Services.AddDbContext<WebhookDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    try
+    {
+        // Try SQL Server first
+        options.UseSqlServer(connectionString);
+    }
+    catch
+    {
+        // Fallback to In-Memory database for development
+        options.UseInMemoryDatabase("WebhookServiceDb");
+    }
+});
 
 // إعداد Redis - Configure Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(provider =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
-    return ConnectionMultiplexer.Connect(connectionString);
+    try
+    {
+        var connectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+        var options = ConfigurationOptions.Parse(connectionString);
+        options.AbortOnConnectFail = false; // Allow retries
+        options.ConnectTimeout = 5000; // 5 seconds timeout
+        return ConnectionMultiplexer.Connect(options);
+    }
+    catch (Exception ex)
+    {
+        var logger = provider.GetService<ILogger<Program>>();
+        logger?.LogWarning(ex, "فشل الاتصال بـ Redis، سيتم استخدام ذاكرة محلية - Failed to connect to Redis, using in-memory cache");
+
+        // Return a mock connection that won't be used
+        return ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false");
+    }
 });
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -61,6 +88,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Webhook Service API V1");
+        c.RoutePrefix = "swagger";
+    });
 }
 // Use CORS
 app.UseCors("AllowAngularDev");
@@ -74,12 +107,22 @@ app.MapEventEndpoints();
 app.MapDeliveryEndpoints();
 app.MapHealthEndpoints();
 app.MapWebhookReceiverEndpoints();
+app.MapTestDataEndpoints();
 
 // تشغيل الترحيلات - Run migrations
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WebhookDbContext>();
-    context.Database.Migrate();
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning(ex, "فشل في تشغيل الترحيلات، سيتم إنشاء قاعدة البيانات - Migration failed, ensuring database is created");
+        context.Database.EnsureCreated();
+    }
 }
 
 app.Run();

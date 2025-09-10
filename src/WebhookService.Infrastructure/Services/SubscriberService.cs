@@ -29,7 +29,21 @@ public class SubscriberService : ISubscriberService
         _cacheService = cacheService;
         _logger = logger;
     }
+    public async Task<List<SubscriberDto>> GetAllSubscribersAsync()
+    {
+        var subscribers = await _context.Subscribers.ToListAsync();
 
+        return subscribers.Select(s => new SubscriberDto
+        {
+            Id = s.Id,
+            TenantId = s.TenantId,
+            CallbackUrl = s.CallbackUrl,
+            KeyId = s.KeyId,
+            EventTypes = s.EventTypes,
+            IsActive = s.IsActive,
+            CreatedAt = s.CreatedAt
+        }).ToList();
+    }
     /// <summary>
     /// إنشاء مشترك جديد
     /// Create a new subscriber

@@ -19,8 +19,10 @@ export class DeliveryLogsComponent implements OnInit {
   
   query: DeliveryQueryRequest = {
     page: 1,
-    pageSize: 20
+    pageSize: 10
   };
+
+  jumpToPage: number = 1;
 
   constructor(private webhookService: WebhookService) {}
 
@@ -31,7 +33,7 @@ export class DeliveryLogsComponent implements OnInit {
   loadDeliveries() {
     this.loading = true;
     this.error = null;
-    
+
     this.webhookService.getDeliveries(this.query).subscribe({
       next: (response) => {
         this.response = response;
@@ -44,6 +46,52 @@ export class DeliveryLogsComponent implements OnInit {
         console.error('Error loading deliveries:', error);
       }
     });
+  }
+
+  searchDeliveries() {
+    this.query.page = 1; // Reset to first page when searching
+    this.loadDeliveries();
+  }
+
+  onPageSizeChange() {
+    this.query.page = 1; // Reset to first page when changing page size
+    this.loadDeliveries();
+  }
+
+  getStartItem(): number {
+    if (!this.response || this.response.totalCount === 0) return 0;
+    return ((this.query.page || 1) - 1) * (this.query.pageSize || 10) + 1;
+  }
+
+  getEndItem(): number {
+    if (!this.response || this.response.totalCount === 0) return 0;
+    const start = this.getStartItem();
+    const end = start + this.deliveries.length - 1;
+    return Math.min(end, this.response.totalCount);
+  }
+
+  getVisiblePages(): number[] {
+    if (!this.response) return [];
+
+    const currentPage = this.query.page || 1;
+    const totalPages = this.response.totalPages;
+    const visiblePages: number[] = [];
+
+    // Show max 5 pages around current page
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    // Adjust start if we're near the end
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      visiblePages.push(i);
+    }
+
+    return visiblePages;
   }
 
   goToPage(page: number) {

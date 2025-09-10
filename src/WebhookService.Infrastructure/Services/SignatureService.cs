@@ -37,8 +37,8 @@ public class SignatureService : ISignatureService
             
             // بناء النص المراد توقيعه - Build text to sign
             var textToSign = $"{version}:{timestamp}:{eventId}:{bodyHash}";
-            
-            // حساب HMAC-SHA256 - Calculate HMAC-SHA256
+
+            // حساب HMAC-SHA256 - Calculate HMAC-SHA256  HMAC = Hash-based Message Authentication Code
             var signature = ComputeHmacSha256(textToSign, secret);
             
             _logger.LogDebug("تم توليد التوقيع للحدث {EventId}", eventId);
@@ -99,12 +99,17 @@ public class SignatureService : ISignatureService
     {
         try
         {
+            //symmetric يعني: نفس المفتاح يُستخدم للتشفير وفك التشفير. symmetric encryption.
             using var aes = Aes.Create();
+            //تحول هذا النص إلى مفتاح مناسب للطول المطلوب من AES (عادة 256-bit).
             aes.Key = DeriveKey(_encryptionKey);
+            //IV هو موجه عشوائي يُستخدم لجعل كل تشفير مختلف حتى لو كان النص نفسه.
             aes.GenerateIV();
-
+            //هنا يتم إنشاء أداة التشفير باستخدام المفتاح و IV.
             using var encryptor = aes.CreateEncryptor();
+            //يتم تحويل المفتاح السري من نص (string) إلى مصفوفة بايتات ليتم تشفيره.
             var secretBytes = Encoding.UTF8.GetBytes(secret);
+            //يتم تشفير النص بالكامل وتحويله إلى بايتات مشفرة.
             var encryptedBytes = encryptor.TransformFinalBlock(secretBytes, 0, secretBytes.Length);
             
             // دمج IV مع البيانات المشفرة - Combine IV with encrypted data

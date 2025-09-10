@@ -39,8 +39,9 @@ public class EventService : IEventService
     {
         _logger.LogInformation("إنشاء حدث جديد من النوع {EventType} للمستأجر {TenantId}", 
             request.EventType, request.TenantId);
-
+        // التحقق من تكرار الحدث 
         // التحقق من التكرار إذا تم توفير مفتاح التكرار - Check idempotency if key provided
+        //هذا يمنع إنشاء حدث مكرر إذا تم إرسال الطلب مرتين.
         if (!string.IsNullOrEmpty(request.IdempotencyKey))
         {
             var existingEvent = await _context.Events
@@ -48,11 +49,12 @@ public class EventService : IEventService
             
             if (existingEvent != null)
             {
+                //حماية ضد التكرار، خاصة في الشبكات غير الموثوقة أو إعادة المحاولة من العميل
                 _logger.LogInformation("الحدث موجود مسبقاً بمفتاح التكرار {IdempotencyKey}", request.IdempotencyKey);
                 
-                var matchedCount = await _context.Deliveries
-                    .CountAsync(d => d.EventId == existingEvent.Id);
+                var matchedCount = await _context.Deliveries.CountAsync(d => d.EventId == existingEvent.Id);
 
+                //إرجاع استجابة مشابهة للطلب الأصلي دون إنشاء حدث جديد
                 return new CreateEventResponse
                 {
                     EventId = existingEvent.Id,

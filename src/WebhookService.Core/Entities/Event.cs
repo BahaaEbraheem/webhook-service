@@ -16,7 +16,7 @@ public class Event
     
     [Required]
     public string Payload { get; set; } = string.Empty;
-    
+    //ÊäİíĞ ÇáÚãáíÉ ãÑÉ æÇÍÏÉ İŞØ ÍÊì áæ Êã ØáÈåÇ ÚÏÉ ãÑÇÊ åæ ãİÊÇÍ İÑíÏ íÑÓá ãÚ ÇáØáÈ áÊÍÏíÏ åĞÇ ÇáØáÈ.
     [MaxLength(100)]
     public string? IdempotencyKey { get; set; }
     

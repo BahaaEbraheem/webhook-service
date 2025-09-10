@@ -43,6 +43,7 @@ public static class EventEndpoints
         IEventService eventService,
         ILogger<Program> logger)
     {
+        //لقياس الزمن يقوم بفتح مؤقت تلقائي
         using var timer = DeliveryLatency.NewTimer();
         
         try
@@ -74,8 +75,8 @@ public static class EventEndpoints
             }
 
             var response = await eventService.CreateEventAsync(request);
-            
-            // تحديث المقاييس - Update metrics
+
+            // تحديث المقاييس - Update metrics بعد أن يتم إنشاء الحدث بنجاح يزيد قيمة العداد بمقدار 1.
             EventsCounter.Inc();
             
             logger.LogInformation("تم إنشاء الحدث {EventId} وإرساله لـ {MatchedSubscribers} مشترك", 

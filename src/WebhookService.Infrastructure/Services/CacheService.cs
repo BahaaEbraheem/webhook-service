@@ -105,32 +105,4 @@ public class CacheService : ICacheService
         }
     }
 
-    /// <summary>
-    /// حذف جميع المفاتيح التي تطابق النمط
-    /// Remove all keys matching pattern
-    /// </summary>
-    public async Task RemovePatternAsync(string pattern)
-    {
-        try
-        {
-            _logger.LogDebug("حذف المفاتيح بالنمط: {Pattern}", pattern);
-            
-            var keys = _server.Keys(pattern: pattern).ToArray();
-            
-            if (keys.Length > 0)
-            {
-                await _database.KeyDeleteAsync(keys);
-                _logger.LogDebug("تم حذف {Count} مفتاح بالنمط: {Pattern}", keys.Length, pattern);
-            }
-            else
-            {
-                _logger.LogDebug("لم يتم العثور على مفاتيح بالنمط: {Pattern}", pattern);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "خطأ في حذف المفاتيح بالنمط: {Pattern}", pattern);
-            throw;
-        }
-    }
 }

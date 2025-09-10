@@ -63,36 +63,47 @@ public class RetryService : BackgroundService
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<WebhookDbContext>();
         var dispatcher = scope.ServiceProvider.GetRequiredService<IWebhookDispatcher>();
+        var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
 
         // البحث عن التسليمات التي تحتاج إعادة محاولة - Find deliveries that need retry
         var now = DateTime.UtcNow;
         var pendingRetries = await context.Deliveries
             .Where(d => d.Status == DeliveryStatus.Failed &&
                        d.NextRetryAt.HasValue &&
-                       d.NextRetryAt.Value <= now &&
+                       d.NextRetryAt.Value <= now &&   //لديها NextRetryAt أقل من الوقت الحالي
                        d.AttemptNumber < 5) // الحد الأقصى 5 محاولات
             .Take(100) // معالجة 100 في المرة الواحدة
             .ToListAsync();
+        if (!pendingRetries.Any()) return;
 
-        if (pendingRetries.Count > 0)
+        _logger.LogInformation("معالجة {Count} إعادة محاولة معلقة", pendingRetries.Count);
+        // المعالجة بالتوازي لكل Delivery
+        var retryTasks = pendingRetries.Select(async delivery =>
         {
-            _logger.LogInformation("معالجة {Count} إعادة محاولة معلقة", pendingRetries.Count);
+            //CircuitBreaker لكل Delivery: يمنع فشل متكرر في عملية واحدة من تعطيل باقي العمليات.
+            // CircuitBreaker منفصل لكل Delivery
+            var cbLogger = loggerFactory.CreateLogger<CircuitBreaker>();
+            var circuitBreaker = new CircuitBreaker(3, TimeSpan.FromSeconds(30), cbLogger);
 
-            // معالجة إعادة المحاولات بالتوازي - Process retries in parallel
-            var retryTasks = pendingRetries.Select(async delivery =>
+            try
             {
-                try
+                await circuitBreaker.ExecuteAsync(async () =>
                 {
                     await dispatcher.ProcessRetryAsync(delivery);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "خطأ في معالجة إعادة المحاولة للتسليم {DeliveryId}", delivery.Id);
-                }
-            });
+                    return true; // ExecuteAsync يحتاج لإرجاع قيمة من النوع T
+                });
+            }
+            catch (InvalidOperationException)
+            {
+                _logger.LogWarning("Delivery {DeliveryId} محجوبة مؤقتًا بسبب قاطع الدائرة", delivery.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل تنفيذ إعادة محاولة للتسليم {DeliveryId}", delivery.Id);
+            }
+        });
 
-            await Task.WhenAll(retryTasks);
-        }
+        await Task.WhenAll(retryTasks);
     }
 
     /// <summary>
@@ -142,95 +153,5 @@ public class RetryService : BackgroundService
     }
 }
 
-/// <summary>
-/// قاطع الدائرة للحماية من الأحمال الزائدة
-/// Circuit breaker for overload protection
-/// </summary>
-public class CircuitBreaker
-{
-    private readonly int _failureThreshold;
-    private readonly TimeSpan _timeout;
-    private readonly ILogger<CircuitBreaker> _logger;
 
-    private int _failureCount;
-    private DateTime _lastFailureTime;
-    private CircuitBreakerState _state = CircuitBreakerState.Closed;
 
-    public CircuitBreaker(int failureThreshold, TimeSpan timeout, ILogger<CircuitBreaker> logger)
-    {
-        _failureThreshold = failureThreshold;
-        _timeout = timeout;
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// تنفيذ العملية مع حماية قاطع الدائرة
-    /// Execute operation with circuit breaker protection
-    /// </summary>
-    public async Task<T> ExecuteAsync<T>(Func<Task<T>> operation)
-    {
-        if (_state == CircuitBreakerState.Open)
-        {
-            if (DateTime.UtcNow - _lastFailureTime > _timeout)
-            {
-                _state = CircuitBreakerState.HalfOpen;
-                _logger.LogInformation("قاطع الدائرة في حالة نصف مفتوح");
-            }
-            else
-            {
-                throw new InvalidOperationException("قاطع الدائرة مفتوح - Circuit breaker is open");
-            }
-        }
-
-        try
-        {
-            var result = await operation();
-            OnSuccess();
-            return result;
-        }
-        catch (Exception)
-        {
-            OnFailure();
-            throw;
-        }
-    }
-
-    /// <summary>
-    /// معالجة النجاح
-    /// Handle success
-    /// </summary>
-    private void OnSuccess()
-    {
-        _failureCount = 0;
-        _state = CircuitBreakerState.Closed;
-    }
-
-    /// <summary>
-    /// معالجة الفشل
-    /// Handle failure
-    /// </summary>
-    private void OnFailure()
-    {
-        _failureCount++;
-        _lastFailureTime = DateTime.UtcNow;
-
-        if (_failureCount >= _failureThreshold)
-        {
-            _state = CircuitBreakerState.Open;
-            _logger.LogWarning("تم فتح قاطع الدائرة بعد {FailureCount} فشل", _failureCount);
-        }
-    }
-
-    public bool IsOpen => _state == CircuitBreakerState.Open;
-}
-
-/// <summary>
-/// حالات قاطع الدائرة
-/// Circuit breaker states
-/// </summary>
-public enum CircuitBreakerState
-{
-    Closed,   // مغلق - العمليات تعمل بشكل طبيعي
-    Open,     // مفتوح - العمليات محظورة
-    HalfOpen  // نصف مفتوح - اختبار العمليات
-}

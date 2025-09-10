@@ -11,9 +11,9 @@ public class Delivery
     public Guid SubscriberId { get; set; }
     
     public DeliveryStatus Status { get; set; }
-    
-    public int AttemptNumber { get; set; }
-    
+        
+    public int AttemptNumber { get; set; }    //  ÚÏÏ ÇáãÍÇæáÇÊ ÇáÊí ÊãÊ áÊæÕíá ÇáÑÓÇáÉ
+
     public int? HttpStatusCode { get; set; }
     
     [MaxLength(1000)]

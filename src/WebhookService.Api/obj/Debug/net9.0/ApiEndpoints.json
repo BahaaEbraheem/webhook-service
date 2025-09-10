@@ -245,6 +245,52 @@
     "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u062D\u0627\u0644\u0629 \u0627\u0644\u0645\u0634\u062A\u0631\u0643 - Get subscriber status"
   },
   {
+    "ContainingType": "WebhookService.Api.Endpoints.TestDataEndpoints",
+    "Method": "ClearAllData",
+    "RelativePath": "api/test-data/clear",
+    "HttpMethod": "DELETE",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "Tags": [
+      "Test Data"
+    ],
+    "EndpointName": "ClearAllData",
+    "Summary": "\u062D\u0630\u0641 \u062C\u0645\u064A\u0639 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A - Clear all data"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.TestDataEndpoints",
+    "Method": "CreateTestData",
+    "RelativePath": "api/test-data/create",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "Tags": [
+      "Test Data"
+    ],
+    "EndpointName": "CreateTestData",
+    "Summary": "\u0625\u0646\u0634\u0627\u0621 \u0628\u064A\u0627\u0646\u0627\u062A \u062A\u062C\u0631\u064A\u0628\u064A\u0629 - Create test data"
+  },
+  {
     "ContainingType": "WebhookService.Api.Endpoints.WebhookReceiverEndpoints",
     "Method": "ReceiveWebhook",
     "RelativePath": "api/webhook/receive",

@@ -18,7 +18,7 @@ public class WebhookDispatcher : IWebhookDispatcher
     private readonly WebhookDbContext _context;
     private readonly ISignatureService _signatureService;
     private readonly ILogger<WebhookDispatcher> _logger;
-    private readonly HashSet<Guid> _processedEventIds = new(); // منع إعادة المعالجة - Prevent replay
+    private readonly HashSet<Guid> _processedEventIds = new(); // تمنع إعادة معالجة نفس الحدث في نفس الجلسة (Replay Prevention
 
     public WebhookDispatcher(
         HttpClient httpClient,
@@ -41,6 +41,7 @@ public class WebhookDispatcher : IWebhookDispatcher
     /// </summary>
     public async Task DispatchWebhookAsync(Event eventEntity, Subscriber subscriber)
     {
+        //  traceId يستخدم لتتبع العملية في السجلات (logs) لتسهيل debugging.
         var traceId = Guid.NewGuid().ToString("N")[..8];
         
         _logger.LogInformation("بدء إرسال الويب هوك - TraceId: {TraceId}, EventId: {EventId}, SubscriberId: {SubscriberId}",
@@ -133,6 +134,7 @@ public class WebhookDispatcher : IWebhookDispatcher
     /// </summary>
     private async Task SendWebhookAsync(Delivery delivery, Event eventEntity, Subscriber subscriber, string traceId)
     {
+        //   بدء توقيت التنفيذ 
         var stopwatch = Stopwatch.StartNew();
         
         try
@@ -153,16 +155,20 @@ public class WebhookDispatcher : IWebhookDispatcher
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/json")
             };
-            
+
             // إضافة الهيدرز المطلوبة - Add required headers
+            //التوقيع لتأكيد صحة الرسالة.
             request.Headers.Add("X-SWR-Signature", $"v1,ts={timestamp},kid={subscriber.KeyId},sig={signature}");
+            //معرف الحدث لتسهيل التعقب على طرف المستقبل
             request.Headers.Add("X-SWR-Event-Id", eventEntity.Id.ToString());
+            //تعريف الخدمة المرسلة.
             request.Headers.Add("User-Agent", "WebhookService/1.0");
             
             _logger.LogDebug("إرسال الطلب - TraceId: {TraceId}, URL: {Url}", traceId, subscriber.CallbackUrl);
             
             // إرسال الطلب - Send request
             var response = await _httpClient.SendAsync(request);
+            //نوقف العد الزمني بعد انتهاء الطلب.
             stopwatch.Stop();
             
             var statusCode = (int)response.StatusCode;

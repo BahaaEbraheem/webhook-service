@@ -51,10 +51,15 @@ public class SubscriberService : ISubscriberService
     public async Task<CreateSubscriberResponse> CreateSubscriberAsync(CreateSubscriberRequest request)
     {
         _logger.LogInformation("إنشاء مشترك جديد للمستأجر {TenantId}", request.TenantId);
-        
         // توليد مفتاح سري جديد - Generate new secret key
         var secret = GenerateSecret();
-        var keyId = Guid.NewGuid().ToString("N")[..16];
+
+
+        var keyId = Guid.NewGuid()     //   يولد معرّف عالمي فريد (UUID
+            .ToString("N")             //   يحول UUID إلى سلسلة مكونة من 32 حرفًا بدون شرطات. 
+            [..16];                    //   يأخذ أول 16 حرف فقط
+
+        //تشفير المفتاح السري
         var encryptedSecret = _signatureService.EncryptSecret(secret);
 
         var subscriber = new Subscriber

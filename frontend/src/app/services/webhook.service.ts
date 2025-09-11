@@ -7,7 +7,7 @@ import { DeliveryPagedResponse, DeliveryQueryRequest } from '../models/delivery.
   providedIn: 'root'
 })
 export class WebhookService {
-  private readonly apiUrl = 'http://localhost:8080/api';
+  private readonly apiUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
@@ -34,6 +34,6 @@ export class WebhookService {
    * Health check
    */
   getHealth(): Observable<any> {
-    return this.http.get(`${this.apiUrl.replace('/api', '')}/health`);
+    return this.http.get('/health');
   }
 }

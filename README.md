@@ -162,33 +162,53 @@ README.md                           # 📖 This documentation
 
 ## 🚀 Quick Start
 
-### 1. Clone Repository
+### Option 1: Docker Development (Recommended)
+
+#### 1. Clone Repository
 ```bash
 git clone https://github.com/BahaaEbraheem/webhook-service.git
 cd webhook-service
 ```
 
-### 2. Start All Services
+#### 2. Start All Services
 ```bash
 docker-compose up -d
 ```
 
 ### 3. Verify Health
 ```bash
-curl http://localhost:5000/health
+curl http://localhost:8080/health
 ```
 ### 4. Verify Swagger
 ```bash
-curl http://localhost:5000/swagger
+curl http://localhost:8080/swagger
 ```
 ### 5. Verify metrics
 ```bash
-curl http://localhost:5000/metrics
+curl http://localhost:8080/metrics
 ```
 ### 6. Access Frontend
 ```bash
-# Angular UI available at:
-curl http://localhost:4200
+# Angular UI available at: http://localhost:4200
+# Frontend will proxy API calls to http://localhost:8080
+```
+
+### Option 2: Local Development
+
+#### 1. Start Backend API
+```bash
+cd src/WebhookService.Api
+dotnet run
+# API will be available at http://localhost:8080
+```
+
+#### 2. Start Frontend (in separate terminal)
+```bash
+cd frontend
+npm install
+npm run start:local
+# Frontend will be available at http://localhost:4200
+# API calls will be proxied to http://localhost:8080
 ```
 
 ## 📋 API Endpoints Implementation
@@ -212,18 +232,18 @@ curl http://localhost:4200
 
 ### Create Subscriber
 ```bash
-curl -X POST http://localhost:5000/api/subscribers \
+curl -X POST http://localhost:8080/api/subscribers \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "tenant-123",
-    "callbackUrl": "https://your-app.com/webhook",
+    "callbackUrl": "http://localhost:8080/api/webhook/receive",
     "eventTypes": ["user.created", "order.completed"]
   }'
 ```
 
 ### Send Event with Idempotency
 ```bash
-curl -X POST http://localhost:5000/api/events \
+curl -X POST http://localhost:8080/api/events \
   -H "Content-Type: application/json" \
   -H "X-Idempotency-Key: unique-key-123" \
   -d '{
@@ -238,7 +258,7 @@ curl -X POST http://localhost:5000/api/events \
 
 ### Query Delivery Logs
 ```bash
-curl "http://localhost:5000/api/deliveries?subscriberId=123&status=1&page=1&pageSize=10"
+curl "http://localhost:8080/api/deliveries?subscriberId=123&status=1&page=1&pageSize=10"
 ```
 
 ## 🔧 Development Setup

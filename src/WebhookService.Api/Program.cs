@@ -53,7 +53,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDev", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Angular dev server
+        policy.WithOrigins("http://localhost:4200", "http://localhost:5000") // Angular dev server and API
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -96,7 +103,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 // Use CORS
-app.UseCors("AllowAngularDev");
+app.UseCors("AllowAll");
 // إضافة مقاييس Prometheus - Add Prometheus metrics
 app.UseMetricServer();
 app.UseHttpMetrics();

@@ -6,16 +6,18 @@ services:
       context: .
       dockerfile: src/WebhookService.Api/Dockerfile
     ports:
-      - "5000:8080"
+      - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=WebhookService;User Id=sa;Password=P@ssw0rd;TrustServerCertificate=true;
-      - Redis__ConnectionString=redis:6379
+      - ConnectionStrings__Redis=redis:6379
     depends_on:
       - sqlserver
       - redis
     networks:
       - webhook-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -40,14 +42,12 @@ services:
       - webhook-network
 
   frontend:
-    image: node:18-alpine
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: webhook-frontend
-    working_dir: /app
     ports:
       - "4200:4200"
-    volumes:
-      - ./frontend:/app
-    command: sh -c "npm install && npm start"
     depends_on:
       - webhook-api
     networks:

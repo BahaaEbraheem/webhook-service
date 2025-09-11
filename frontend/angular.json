@@ -56,6 +56,20 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "docker": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.docker.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -68,6 +82,9 @@
             },
             "development": {
               "buildTarget": "webhook-service-frontend:build:development"
+            },
+            "docker": {
+              "buildTarget": "webhook-service-frontend:build:docker"
             }
           },
           "defaultConfiguration": "development"

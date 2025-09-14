@@ -11,4 +11,7 @@ public interface ISubscriberService
     Task<List<Subscriber>> GetSubscribersByTenantAndEventTypeAsync(string tenantId, string eventType);
     Task InvalidateCacheAsync(string tenantId);
     Task<List<SubscriberDto>> GetAllSubscribersAsync();
+    Task<Subscriber?> GetSubscriberByIdAsync(Guid subscriberId);
+    Task<Subscriber?> GetSubscriberByKeyIdAsync(string keyId);
+
 }

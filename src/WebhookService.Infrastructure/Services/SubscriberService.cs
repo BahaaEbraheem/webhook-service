@@ -207,4 +207,24 @@ public class SubscriberService : ISubscriberService
         rng.GetBytes(bytes);
         return Convert.ToBase64String(bytes);
     }
+
+
+    /// <summary>
+    /// الحصول على المشترك بواسطة KeyId
+    /// Get subscriber by KeyId
+    /// </summary>
+    public async Task<Subscriber?> GetSubscriberByKeyIdAsync(string keyId)
+    {
+        if (string.IsNullOrWhiteSpace(keyId))
+            return null;
+
+        return await _context.Subscribers
+            .FirstOrDefaultAsync(s => s.KeyId == keyId);
+    }
+
+
+    public async Task<Subscriber?> GetSubscriberByIdAsync(Guid subscriberId)
+    {
+        return await _context.Subscribers.FindAsync(subscriberId);
+    }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using WebhookService.Core.Interfaces;
+using WebhookService.Infrastructure.Services;
 
 namespace WebhookService.Api.Endpoints;
 
@@ -44,6 +45,7 @@ public static class WebhookReceiverEndpoints
     /// </summary>
     private static async Task<IResult> ReceiveWebhook(
         HttpRequest request,
+        ISubscriberService subscriberService,
         ISignatureService signatureService,
         ILogger<Program> logger)
     {
@@ -57,7 +59,61 @@ public static class WebhookReceiverEndpoints
             
             // استخراج الهيدرز - Extract headers
             var headers = ExtractHeaders(request);
-            
+            // التحقق من وجود هيدر X-SWR-Event-Id و X-SWR-Signature
+            var eventIdHeader = request.Headers["X-SWR-Event-Id"].FirstOrDefault();
+            var signatureHeader = request.Headers["X-SWR-Signature"].FirstOrDefault();
+
+            bool signatureValid = false;
+            if (!string.IsNullOrEmpty(eventIdHeader) && !string.IsNullOrEmpty(signatureHeader))
+            {
+                try
+                {
+                    // تحليل الهيدر: "v1,ts=1694623600,kid=xyz,sig=base64"
+                    var parts = signatureHeader.Split(',');
+                    var version = parts.FirstOrDefault()?.Trim(); // عادة "v1"
+                    var tsPart = parts.FirstOrDefault(p => p.StartsWith("ts="))?.Substring(3);
+                    var sigPart = parts.FirstOrDefault(p => p.StartsWith("sig="))?.Substring(4);
+                    var kid = parts.FirstOrDefault(p => p.StartsWith("kid="))?.Substring(4);
+
+                    if (long.TryParse(tsPart, out var timestamp) &&
+                        !string.IsNullOrEmpty(sigPart) &&
+                        Guid.TryParse(eventIdHeader, out var eventId) &&
+                        !string.IsNullOrEmpty(kid))
+                    {
+                        // الحصول على المشترك من الـ KeyId (kid)
+                        var subscriber = await subscriberService.GetSubscriberByKeyIdAsync(kid);
+                        if (subscriber != null)
+                        {
+                            // فك تشفير السر
+                            var secret = signatureService.DecryptSecret(subscriber.EncryptedSecret);
+
+                            // التحقق من صحة التوقيع
+                            signatureValid = signatureService.ValidateSignature(
+                                sigPart,
+                                version!,
+                                timestamp,
+                                eventId,
+                                body,
+                                secret
+                            );
+
+                            if (!signatureValid)
+                                logger.LogWarning("التوقيع غير صالح للمشترك {SubscriberId}", subscriber.Id);
+                            else
+                                logger.LogInformation("تم التحقق من صحة التوقيع للمشترك {SubscriberId}", subscriber.Id);
+                        }
+                        else
+                        {
+                            logger.LogWarning("لم يتم العثور على مشترك بالمفتاح {KeyId}", kid);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "خطأ أثناء التحقق من التوقيع");
+                }
+            }
+
             // تسجيل البيانات المستقبلة - Log received data
             logger.LogInformation("تم استقبال ويب هوك: Headers={@Headers}, BodyLength={BodyLength}", 
                 headers, body.Length);
@@ -102,7 +158,7 @@ public static class WebhookReceiverEndpoints
                 subscriberId, request.HttpContext.Connection.RemoteIpAddress);
 
             // التحقق من وجود المشترك - Check if subscriber exists
-            var subscriber = await subscriberService.GetSubscriberStatusAsync(subscriberId);
+            var subscriber = await subscriberService.GetSubscriberByIdAsync(subscriberId);
             if (subscriber == null)
             {
                 logger.LogWarning("المشترك غير موجود: {SubscriberId}", subscriberId);
@@ -127,9 +183,48 @@ public static class WebhookReceiverEndpoints
             bool signatureValid = true;
             if (!string.IsNullOrEmpty(signatureHeader) && !string.IsNullOrEmpty(eventIdHeader))
             {
-                // TODO: Implement signature verification
-                // This would require decrypting the subscriber's secret and validating
-                logger.LogDebug("تم العثور على توقيع، سيتم التحقق منه لاحقاً");
+                try
+                {
+                    // تحليل الهيدر: "v1,ts=1694623600,kid=xyz,sig=base64"
+                    var parts = signatureHeader.Split(',');
+                    var version = parts.FirstOrDefault()?.Trim(); // عادة "v1"
+                    var tsPart = parts.FirstOrDefault(p => p.StartsWith("ts="))?.Substring(3);
+                    var sigPart = parts.FirstOrDefault(p => p.StartsWith("sig="))?.Substring(4);
+
+                    if (long.TryParse(tsPart, out var timestamp) && !string.IsNullOrEmpty(sigPart) && Guid.TryParse(eventIdHeader, out var eventId))
+                    {
+                        // فك تشفير السر
+                        var secret = signatureService.DecryptSecret(subscriber.EncryptedSecret);
+
+                        // التحقق من صحة التوقيع
+                        signatureValid = signatureService.ValidateSignature(
+                            sigPart,
+                            version!,
+                            timestamp,
+                            eventId,
+                            body,
+                            secret
+                        );
+
+                        if (!signatureValid)
+                        {
+                            logger.LogWarning("التوقيع غير صالح للمشترك {SubscriberId}", subscriberId);
+                        }
+                        else
+                        {
+                            logger.LogInformation("تم التحقق من صحة التوقيع للمشترك {SubscriberId}", subscriberId);
+                        }
+                    }
+                    else
+                    {
+                        signatureValid = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    signatureValid = false;
+                    logger.LogError(ex, "خطأ أثناء التحقق من التوقيع للمشترك {SubscriberId}", subscriberId);
+                }
             }
 
             // تسجيل البيانات المستقبلة - Log received data

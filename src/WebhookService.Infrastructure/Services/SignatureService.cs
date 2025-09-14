@@ -111,10 +111,12 @@ public class SignatureService : ISignatureService
             var secretBytes = Encoding.UTF8.GetBytes(secret);
             //يتم تشفير النص بالكامل وتحويله إلى بايتات مشفرة.
             var encryptedBytes = encryptor.TransformFinalBlock(secretBytes, 0, secretBytes.Length);
-            
-            // دمج IV مع البيانات المشفرة - Combine IV with encrypted data
+
+            //نخلق مصفوفة جديدة أكبر: طولها طول IV + طول البيانات المشفرة.
             var result = new byte[aes.IV.Length + encryptedBytes.Length];
+            //نضع IV في بداية المصفوفة.
             Array.Copy(aes.IV, 0, result, 0, aes.IV.Length);
+            //نضع البيانات المشفرة مباشرة بعد IV.
             Array.Copy(encryptedBytes, 0, result, aes.IV.Length, encryptedBytes.Length);
             
             return Convert.ToBase64String(result);

@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Mantek_test\\webhook-service\\webhook-service\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{041B2241-1194-4864-A3F3-E2AD0223E9F3}|src\\WebhookService.Api\\WebhookService.Api.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{041B2241-1194-4864-A3F3-E2AD0223E9F3}|src\\WebhookService.Api\\WebhookService.Api.csproj|solutionrelative:src\\webhookservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{041B2241-1194-4864-A3F3-E2AD0223E9F3}|src\\WebhookService.Api\\WebhookService.Api.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.api\\endpoints\\webhookreceiverendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{041B2241-1194-4864-A3F3-E2AD0223E9F3}|src\\WebhookService.Api\\WebhookService.Api.csproj|solutionrelative:src\\webhookservice.api\\endpoints\\webhookreceiverendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{92EBC97C-70FC-4199-B36B-B266C1F12100}|src\\WebhookService.Infrastructure\\WebhookService.Infrastructure.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.infrastructure\\services\\webhookdispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{92EBC97C-70FC-4199-B36B-B266C1F12100}|src\\WebhookService.Infrastructure\\WebhookService.Infrastructure.csproj|solutionrelative:src\\webhookservice.infrastructure\\services\\webhookdispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{92EBC97C-70FC-4199-B36B-B266C1F12100}|src\\WebhookService.Infrastructure\\WebhookService.Infrastructure.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.infrastructure\\services\\cacheservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{92EBC97C-70FC-4199-B36B-B266C1F12100}|src\\WebhookService.Infrastructure\\WebhookService.Infrastructure.csproj|solutionrelative:src\\webhookservice.infrastructure\\services\\cacheservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D33C63D2-0990-4719-9699-1F7DA4350A7D}|src\\WebhookService.Core\\WebhookService.Core.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.core\\interfaces\\isignatureservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D33C63D2-0990-4719-9699-1F7DA4350A7D}|src\\WebhookService.Core\\WebhookService.Core.csproj|solutionrelative:src\\webhookservice.core\\interfaces\\isignatureservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{92EBC97C-70FC-4199-B36B-B266C1F12100}|src\\WebhookService.Infrastructure\\WebhookService.Infrastructure.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.infrastructure\\services\\subscriberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{92EBC97C-70FC-4199-B36B-B266C1F12100}|src\\WebhookService.Infrastructure\\WebhookService.Infrastructure.csproj|solutionrelative:src\\webhookservice.infrastructure\\services\\subscriberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{041B2241-1194-4864-A3F3-E2AD0223E9F3}|src\\WebhookService.Api\\WebhookService.Api.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.api\\endpoints\\subscriberendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{041B2241-1194-4864-A3F3-E2AD0223E9F3}|src\\WebhookService.Api\\WebhookService.Api.csproj|solutionrelative:src\\webhookservice.api\\endpoints\\subscriberendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D33C63D2-0990-4719-9699-1F7DA4350A7D}|src\\WebhookService.Core\\WebhookService.Core.csproj|c:\\mantek_test\\webhook-service\\webhook-service\\src\\webhookservice.core\\interfaces\\isubscriberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D33C63D2-0990-4719-9699-1F7DA4350A7D}|src\\WebhookService.Core\\WebhookService.Core.csproj|solutionrelative:src\\webhookservice.core\\interfaces\\isubscriberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,60 +30,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 18,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api\\Program.cs",
-              "RelativeDocumentMoniker": "src\\WebhookService.Api\\Program.cs",
-              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api\\Program.cs",
-              "RelativeToolTip": "src\\WebhookService.Api\\Program.cs",
-              "ViewState": "AgIAAGIAAAAAAAAAAAAcwG4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-10T20:00:23.395Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SubscriberService.cs",
-              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
-              "RelativeDocumentMoniker": "src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
-              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
-              "RelativeToolTip": "src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAkwKQAAABPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-10T19:54:03.519Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CacheService.cs",
-              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\CacheService.cs",
-              "RelativeDocumentMoniker": "src\\WebhookService.Infrastructure\\Services\\CacheService.cs",
-              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\CacheService.cs",
-              "RelativeToolTip": "src\\WebhookService.Infrastructure\\Services\\CacheService.cs",
-              "ViewState": "AgIAAEwAAAAAAAAAAAAUwGAAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-10T19:53:16.475Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "WebhookDispatcher.cs",
-              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\WebhookDispatcher.cs",
-              "RelativeDocumentMoniker": "src\\WebhookService.Infrastructure\\Services\\WebhookDispatcher.cs",
-              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\WebhookDispatcher.cs",
-              "RelativeToolTip": "src\\WebhookService.Infrastructure\\Services\\WebhookDispatcher.cs",
-              "ViewState": "AgIAAJgAAAAAAAAAAIAwwKoAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-10T19:46:40.166Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -135,6 +87,71 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ISignatureService.cs",
+              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Core\\Interfaces\\ISignatureService.cs",
+              "RelativeDocumentMoniker": "src\\WebhookService.Core\\Interfaces\\ISignatureService.cs",
+              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Core\\Interfaces\\ISignatureService.cs",
+              "RelativeToolTip": "src\\WebhookService.Core\\Interfaces\\ISignatureService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T15:01:18.152Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SubscriberService.cs",
+              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
+              "RelativeDocumentMoniker": "src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
+              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
+              "RelativeToolTip": "src\\WebhookService.Infrastructure\\Services\\SubscriberService.cs",
+              "ViewState": "AgIAALwAAAAAAAAAAAAswOAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T15:00:21.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SubscriberEndpoints.cs",
+              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api\\Endpoints\\SubscriberEndpoints.cs",
+              "RelativeDocumentMoniker": "src\\WebhookService.Api\\Endpoints\\SubscriberEndpoints.cs",
+              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api\\Endpoints\\SubscriberEndpoints.cs",
+              "RelativeToolTip": "src\\WebhookService.Api\\Endpoints\\SubscriberEndpoints.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAIwEsAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T14:56:43.484Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ISubscriberService.cs",
+              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Core\\Interfaces\\ISubscriberService.cs",
+              "RelativeDocumentMoniker": "src\\WebhookService.Core\\Interfaces\\ISubscriberService.cs",
+              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Core\\Interfaces\\ISubscriberService.cs",
+              "RelativeToolTip": "src\\WebhookService.Core\\Interfaces\\ISubscriberService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T14:55:34.427Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "WebhookReceiverEndpoints.cs",
+              "DocumentMoniker": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api\\Endpoints\\WebhookReceiverEndpoints.cs",
+              "RelativeDocumentMoniker": "src\\WebhookService.Api\\Endpoints\\WebhookReceiverEndpoints.cs",
+              "ToolTip": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api\\Endpoints\\WebhookReceiverEndpoints.cs",
+              "RelativeToolTip": "src\\WebhookService.Api\\Endpoints\\WebhookReceiverEndpoints.cs",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAkwFgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T14:29:43.305Z",
+              "EditorCaption": ""
             }
           ]
         },

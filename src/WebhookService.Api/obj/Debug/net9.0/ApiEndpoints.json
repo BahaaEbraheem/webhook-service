@@ -174,6 +174,42 @@
   },
   {
     "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
+    "Method": "GetFullSubscriber",
+    "RelativePath": "api/subscribers/{id:guid}/full",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.Entities.Subscriber",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Subscribers"
+    ],
+    "EndpointName": "GetFullSubscriber",
+    "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0645\u0634\u062A\u0631\u0643 \u0627\u0644\u0643\u0627\u0645\u0644 \u0628\u0645\u0627 \u0641\u064A \u0630\u0644\u0643 \u0627\u0644\u0633\u0631 \u0627\u0644\u0645\u0634\u0641\u0631 - Get full subscriber data including encrypted secret"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
     "Method": "RotateSecret",
     "RelativePath": "api/subscribers/{id:guid}/rotate-secret",
     "HttpMethod": "POST",
@@ -243,6 +279,42 @@
     ],
     "EndpointName": "GetSubscriberStatus",
     "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u062D\u0627\u0644\u0629 \u0627\u0644\u0645\u0634\u062A\u0631\u0643 - Get subscriber status"
+  },
+  {
+    "ContainingType": "WebhookService.Api.Endpoints.SubscriberEndpoints",
+    "Method": "GetSubscriberByKeyId",
+    "RelativePath": "api/subscribers/key/{keyId}",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebhookService.Core.Entities.Subscriber",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Subscribers"
+    ],
+    "EndpointName": "GetSubscriberByKeyId",
+    "Summary": "\u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u0627\u0644\u0645\u0634\u062A\u0631\u0643 \u0628\u0648\u0627\u0633\u0637\u0629 KeyId - Get subscriber by KeyId"
   },
   {
     "ContainingType": "WebhookService.Api.Endpoints.TestDataEndpoints",

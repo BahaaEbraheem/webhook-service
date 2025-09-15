@@ -45,7 +45,7 @@ public class WebhookIntegrationTests : IClassFixture<WebApplicationFactory<Progr
         var request = new CreateSubscriberRequest
         {
             TenantId = "test-tenant",
-            CallbackUrl = "https://webhook.site/test",
+            CallbackUrl = "http://localhost:8080/api/webhook/receive",
             EventTypes = new List<string> { "user.created", "order.completed" }
         };
 
@@ -72,7 +72,7 @@ public class WebhookIntegrationTests : IClassFixture<WebApplicationFactory<Progr
         var subscriberRequest = new CreateSubscriberRequest
         {
             TenantId = "test-tenant",
-            CallbackUrl = "https://webhook.site/test-event",
+            CallbackUrl = "http://localhost:8080/api/webhook/receive",
             EventTypes = new List<string> { "user.created" }
         };
 

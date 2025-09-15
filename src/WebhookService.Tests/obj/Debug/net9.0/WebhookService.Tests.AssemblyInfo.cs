@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebhookService.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b26658ed0a27733545481cc1f2d52058a3609e20")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aab85f49b5ba79d603635c99e23b6ab5f1a02524")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebhookService.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebhookService.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

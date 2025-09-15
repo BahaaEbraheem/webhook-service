@@ -1,3 +1,5 @@
 {
-  "WebhookService.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Core"
+  "WebhookService.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Api",
+  "WebhookService.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Core",
+  "WebhookService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Mantek_test\\webhook-service\\webhook-service\\src\\WebhookService.Infrastructure"
 }
